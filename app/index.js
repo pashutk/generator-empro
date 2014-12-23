@@ -58,6 +58,7 @@ module.exports = yeoman.generators.Base.extend({
       
       this.template('_package.json', 'package.json');
       this.template('_bower.json', 'bower.json');
+      this.copy('_gulpfile.coffee', 'gulpfile.coffee');
       this.copy('_src/_layouts/_index.jade', 'src/layouts/index.jade');
       this.copy('_src/_scripts/_main.coffee', 'src/scripts/main.coffee');
       this.copy('_src/_scripts/_ui/_ui.coffee', 'src/scripts/ui/ui.coffee');
