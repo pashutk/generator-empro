@@ -18,11 +18,12 @@ module.exports = yeoman.generators.Base.extend({
       'Welcome to the ' + chalk.red('Empro') + ' generator!'
     ));
 
+
     var prompts = [{
-      type: 'confirm',
-      name: 'someOption',
-      message: 'Would you like to enable this option?',
-      default: true
+      type    : 'input',
+      name    : 'name',
+      message : 'Your project name',
+      default : this.appname // Default to current folder name
     }];
 
     this.prompt(prompts, function (props) {
@@ -54,18 +55,18 @@ module.exports = yeoman.generators.Base.extend({
       this.mkdir('src/scripts/libs');
 
 
-      this.copy('_package.json', 'package.json');
-      this.copy('_server.js', 'server.js');
-      this.copy('_main.js', 'app/main.js');
-      this.copy('_index.html', 'static/index.html');
-      this.fs.copy(
-        this.templatePath('_package.json'),
-        this.destinationPath('package.json')
-      );
-      this.fs.copy(
-        this.templatePath('_bower.json'),
-        this.destinationPath('bower.json')
-      );
+      
+      this.template('_package.json', 'package.json');
+      this.template('_bower.json', 'bower.json');
+      this.copy('_src/_layouts/_index.jade', 'src/layouts/index.jade');
+      this.copy('_src/_scripts/_main.coffee', 'src/scripts/main.coffee');
+      this.copy('_src/_scripts/_ui/_ui.coffee', 'src/scripts/ui/ui.coffee');
+      this.copy('_src/_styles/_base/__vars.styl', 'src/styles/base/_vars.styl');
+      this.copy('_src/_styles/_base/_grid.styl', 'src/styles/base/grid.styl');
+      this.copy('_src/_styles/_fix/_fixes.styl', 'src/styles/fix/fixes.styl');
+      this.copy('_src/_styles/_libs/_normalize.css', 'src/styles/libs/normalize.css');
+      this.copy('_src/_styles/_main/_main.styl', 'src/styles/main/main.styl');
+
     },
 
     projectfiles: function () {
