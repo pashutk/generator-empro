@@ -37,6 +37,7 @@ module.exports = yeoman.generators.Base.extend({
     app: function () {
       this.mkdir('build');
       this.mkdir('src');
+      this.mkdir('src/files');
       this.mkdir('src/styles');
       this.mkdir('src/styles/libs');
       this.mkdir('src/styles/base');

@@ -12,20 +12,37 @@ concat     = require 'gulp-concat'
 csso       = require 'gulp-csso'
 browserify = require 'browserify'
 source     = require 'vinyl-source-stream'
+coffeelint = require 'gulp-coffeelint'
+connect    = require 'gulp-connect'
+
+buildFolder = 'build'
+
+gulp.task 'connect', ->
+  connect.server
+    port: 1337
+    livereload: on
+    root: buildFolder
+
+gulp.task 'stylus', ->
+  gulp.src ['src/styles/**/*.styl','!src/styles/**/_*.styl']
+  .pipe stylus()
+  .pipe concat 'style.css'
+  .pipe prefix '> 1%'
+  .pipe csso()
+  .pipe gulp.dest buildFolder+'/css'
 
 gulp.task 'css', ->
-  gulp.src ['src/styles/**/*.styl','!src/styles/**/_*.styl']
-    .pipe stylus()
-    .pipe concat 'style.css'
-    .pipe prefix '> 1%'
-    .pipe csso()
-    .pipe gulp.dest 'build/css'
+  gulp.src ['src/styles/**/*.css','!src/styles/**/_*.css']
+  .pipe concat 'libs.css'
+  .pipe prefix '> 1%'
+  .pipe csso()
+  .pipe gulp.dest buildFolder+'/css'
 
 gulp.task 'html', ->
-  gulp.src 'src/layouts/**/*.jade'
-    .pipe jade()
-    .pipe minifyHTML()
-    .pipe gulp.dest 'build'
+  gulp.src ['src/layouts/**/*.jade','!src/layouts/**/_*.jade']
+  .pipe jade()
+  .pipe minifyHTML()
+  .pipe gulp.dest buildFolder+''
 
 gulp.task 'coffee', ->
   browserify
@@ -33,9 +50,24 @@ gulp.task 'coffee', ->
     extensions: ['.coffee']
   .bundle()
   .pipe source 'main.js'
-  .pipe gulp.dest 'build/js'
+  .pipe gulp.dest buildFolder+'/js'
 
-gulp.task 'default', ['css','html','coffee'], ->
-  gulp.watch 'src/styles/**/*.styl',['css']
+gulp.task 'lint', ->
+  gulp.src 'src/**/*.coffee'
+  .pipe(coffeelint())
+  .pipe(coffeelint.reporter())
+
+gulp.task 'js', ->
+  gulp.src './src/scripts/libs/*.js'
+  .pipe concat 'libs.js'
+  .pipe gulp.dest buildFolder+'/js'
+
+gulp.task 'copy', ->
+  gulp.src ['./src/files/**/*.*']
+  .pipe gulp.dest buildFolder
+
+gulp.task 'default', ['stylus','css','html','coffee','js','lint', 'copy','connect'], ->
+  gulp.watch 'src/styles/**/*.styl',['stylus','css']
   gulp.watch 'src/layouts/**/*.jade',['html']
-  gulp.watch 'src/scripts/**/*.coffee',['coffee']
+  gulp.watch ['src/scripts/**/*.coffee','src/layouts/templates/*.hbs'],['coffee']
+  gulp.watch './src/scripts/libs/*.js',['js']
